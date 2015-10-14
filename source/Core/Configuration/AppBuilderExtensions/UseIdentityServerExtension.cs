@@ -59,11 +59,6 @@ namespace Owin
             JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
             JwtSecurityTokenHandler.OutboundClaimTypeMap = new Dictionary<string, string>();
 
-            if (options.RequireSsl)
-            {
-                app.Use<RequireSslMiddleware>();
-            }
-
             if (options.LoggingOptions.EnableKatanaLogging)
             {
                 app.SetLoggerFactory(new LibLogKatanaLoggerFactory());
@@ -98,7 +93,7 @@ namespace Owin
             app.ConfigureHttpLogging(options.LoggingOptions);
 
             SignatureConversions.AddConversions(app);
-            
+
             var httpConfig = WebApiConfig.Configure(options, container);
             app.UseAutofacWebApi(httpConfig);
             app.UseWebApi(httpConfig);
@@ -109,14 +104,14 @@ namespace Owin
                 // TODO -- perhaps use AsyncHelper instead?
                 DoStartupDiagnosticsAsync(options, eventSvc).Wait();
             }
-            
+
             return app;
         }
 
         private static async Task DoStartupDiagnosticsAsync(IdentityServerOptions options, IEventService eventSvc)
         {
             var cert = options.SigningCertificate;
-            
+
             if (cert == null)
             {
                 Logger.Warn("No signing certificate configured.");

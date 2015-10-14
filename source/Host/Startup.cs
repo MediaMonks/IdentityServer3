@@ -15,6 +15,7 @@
  */
 
 using IdentityServer3.Core.Configuration;
+using IdentityServer3.Core.Configuration.Hosting;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Host;
 using IdentityServer3.Host.Config;
@@ -86,6 +87,7 @@ namespace IdentityServer3.Host
                         }
                     };
 
+                    coreApp.Use<RequireSslMiddleware>();
                     coreApp.UseIdentityServer(idsrvOptions);
                 });
         }

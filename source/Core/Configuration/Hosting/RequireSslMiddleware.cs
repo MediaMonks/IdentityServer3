@@ -22,16 +22,24 @@ using System.Threading.Tasks;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class RequireSslMiddleware
+    public class RequireSslMiddleware
     {
-        readonly Func<IDictionary<string, object>, Task> _next;
+        private readonly Func<IDictionary<string, object>, Task> _next;
 
         public RequireSslMiddleware(Func<IDictionary<string, object>, Task> next)
         {
             _next = next;
         }
 
-        public async Task Invoke(IDictionary<string, object> env)
+        protected Func<IDictionary<string, object>, Task> Next
+        {
+            get
+            {
+                return _next;
+            }
+        }
+
+        public virtual async Task Invoke(IDictionary<string, object> env)
         {
             var context = new OwinContext(env);
 
@@ -45,7 +53,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                 return;
             }
 
-            await _next(env);
+            await Next(env);
         }
     }
 }
