@@ -31,16 +31,27 @@ using System.Threading.Tasks;
 
 namespace IdentityServer3.Core.Extensions
 {
-    internal static class InternalOwinExtensions
+    /// <summary>
+    /// Container for extension methods for OwinContext
+    /// </summary>
+    public static class OwinExtensions
     {
+        /// <summary>
+        /// Get the requestId from the <paramref name="context"/> 
+        /// </summary>
+        /// <param name="context">the owin context</param>
+        /// <returns>the requestId</returns>
         public static string GetRequestId(this IOwinContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
 
             return context.Environment.GetRequestId();
         }
+    }
 
-        public static void SetRequestId(this IDictionary<string, object> env, string id)
+    internal static class InternalOwinExtensions
+    {
+        internal static void SetRequestId(this IDictionary<string, object> env, string id)
         {
             if (env == null) throw new ArgumentNullException("env");
 

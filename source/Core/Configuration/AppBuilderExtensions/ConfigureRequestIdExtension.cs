@@ -20,9 +20,17 @@ using System.Diagnostics;
 
 namespace Owin
 {
-    internal static class ConfigureRequestIdExtension
+    /// <summary>
+    /// Container for requestId middleware
+    /// </summary>
+    public static class ConfigureRequestIdExtension
     {
-        internal static IAppBuilder ConfigureRequestId(this IAppBuilder app)
+        /// <summary>
+        /// Inserts middleware that assigns a request id to the OwinContext Environment using the Trace.CorrelationManager
+        /// </summary>
+        /// <param name="app">AppBuilder to add middleware to</param>
+        /// <returns>the <paramref name="app"/></returns>
+        public static IAppBuilder ConfigureRequestId(this IAppBuilder app) //TODO: UseRequestId would be a more appropriate name, because this method inserts middleware
         {
             app.Use(async (ctx, next) =>
             {
