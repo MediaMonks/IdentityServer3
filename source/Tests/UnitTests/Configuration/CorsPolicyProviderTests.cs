@@ -32,10 +32,10 @@ namespace IdentityServer3.Tests.Configuration
         {
         }
 
-        protected override Task<bool> IsOriginAllowed(string origin, IDictionary<string, object> env)
-        {
-            return Task.FromResult(true);
-        }
+        //protected override Task<bool> IsOriginAllowed(string origin, IDictionary<string, object> env)
+        //{
+        //    return Task.FromResult(true);
+        //}
     }
 
     public class CorsPolicyProviderTests

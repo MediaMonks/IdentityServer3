@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Threading.Tasks;
+using Microsoft.Owin.Builder;
 
 namespace Owin
 {
@@ -75,7 +76,7 @@ namespace Owin
             var container = AutofacConfig.Configure(options);
             app.UseAutofacMiddleware(container);
 
-            app.UseCors();
+            app.UseCors(container.Resolve<ICorsPolicyService>());
             app.ConfigureCookieAuthentication(options.AuthenticationOptions.CookieOptions, options.DataProtector);
 
             if (options.PluginConfiguration != null)

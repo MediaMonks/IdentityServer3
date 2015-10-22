@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+using IdentityServer3.Core;
 using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Configuration.Hosting;
 using IdentityServer3.Core.Services;
+using IdentityServer3.Core.Services.Default;
 using IdentityServer3.Host;
 using IdentityServer3.Host.Config;
 using Microsoft.Owin;
@@ -27,6 +29,7 @@ using Microsoft.Owin.Security.Twitter;
 using Microsoft.Owin.Security.WsFederation;
 using Owin;
 using Serilog;
+using System.Collections.Generic;
 
 [assembly: OwinStartup(typeof(Startup_LocalTest))]
 
@@ -48,15 +51,14 @@ namespace IdentityServer3.Host
 
             app.Map("/core", coreApp =>
                 {
-                    var factory = new IdentityServerServiceFactory()
+                    var factory =new IdentityServerServiceFactory()
                         .UseInMemoryUsers(Users.Get())
                         .UseInMemoryClients(Clients.Get())
                         .UseInMemoryScopes(Scopes.Get());
 
-                    factory.CustomGrantValidators.Add(
-                        new Registration<ICustomGrantValidator>(typeof(CustomGrantValidator)));
-                    factory.CustomGrantValidators.Add(
-                        new Registration<ICustomGrantValidator>(typeof(AnotherCustomGrantValidator)));
+                    factory.CustomGrantValidators.Add(new Registration<ICustomGrantValidator>(typeof(CustomGrantValidator)));
+                    factory.CustomGrantValidators.Add(new Registration<ICustomGrantValidator>(typeof(AnotherCustomGrantValidator)));
+                    factory.CorsPolicyService = new Registration<ICorsPolicyService>(new DefaultCorsPolicyService { AllowAll = true });
 
                     factory.ConfigureClientStoreCache();
                     factory.ConfigureScopeStoreCache();

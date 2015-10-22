@@ -26,17 +26,19 @@ using System.Threading.Tasks;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class CorsPolicyProvider : ICorsPolicyProvider
+    public class CorsPolicyProvider : ICorsPolicyProvider
     {
         private readonly static ILog Logger = LogProvider.GetCurrentClassLogger();
-        
-        readonly string[] paths;
 
-        public CorsPolicyProvider(IEnumerable<string> allowedPaths)
+        private readonly string[] paths;
+        private ICorsPolicyService corsPolicyService;
+
+        public CorsPolicyProvider(ICorsPolicyService corsPolicyService, IEnumerable<string> allowedPaths)
         {
             if (allowedPaths == null) throw new ArgumentNullException("allowedPaths");
 
             this.paths = allowedPaths.Select(Normalize).ToArray();
+            this.corsPolicyService = corsPolicyService;
         }
 
         public async Task<System.Web.Cors.CorsPolicy> GetCorsPolicyAsync(IOwinRequest request)
@@ -53,7 +55,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                 {
                     Logger.InfoFormat("CORS request made for path: {0} from origin: {1}", path, origin);
 
-                    if (await IsOriginAllowed(origin, request.Environment))
+                    if (await corsPolicyService.IsOriginAllowedAsync(origin))
                     {
                         Logger.Info("CorsPolicyService allowed origin");
                         return Allow(origin);
@@ -70,12 +72,6 @@ namespace IdentityServer3.Core.Configuration.Hosting
             }
 
             return null;
-        }
-
-        protected virtual async Task<bool> IsOriginAllowed(string origin, IDictionary<string, object> env)
-        {
-            var corsPolicy = env.ResolveDependency<ICorsPolicyService>();
-            return await corsPolicy.IsOriginAllowedAsync(origin);
         }
 
         private bool IsPathAllowed(IOwinRequest request)
@@ -101,11 +97,11 @@ namespace IdentityServer3.Core.Configuration.Hosting
                     path = path.Substring(0, path.Length - 1);
                 }
             }
-            
+
             return path;
         }
 
-        System.Web.Cors.CorsPolicy Allow(string origin)
+        protected virtual System.Web.Cors.CorsPolicy Allow(string origin)
         {
             var p = new System.Web.Cors.CorsPolicy
             {

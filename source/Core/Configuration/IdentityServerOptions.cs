@@ -46,7 +46,10 @@ namespace IdentityServer3.Core.Configuration
             this.InputLengthRestrictions = new InputLengthRestrictions();
         }
 
-        protected internal virtual void Validate()
+        /// <summary>
+        /// Validates the IdentityServerOptions
+        /// </summary>
+        public virtual void Validate()
         {            
             if (AuthenticationOptions == null)
             {
@@ -190,6 +193,9 @@ namespace IdentityServer3.Core.Configuration
         /// </value>
         public bool EnableWelcomePage { get; set; }
 
+        /// <summary>
+        /// Gets the signing certificates
+        /// </summary>
         protected internal IEnumerable<X509Certificate2> PublicKeysForMetadata
         {
             get

@@ -16,16 +16,17 @@
 
 using IdentityServer3.Core;
 using IdentityServer3.Core.Configuration.Hosting;
+using IdentityServer3.Core.Services;
 
 namespace Owin
 {
-    internal static class UseCorsExtension
+    public  static class UseCorsExtension
     {
-        public static void UseCors(this IAppBuilder app)
+        public static void UseCors(this IAppBuilder app, ICorsPolicyService corsPolicyService)
         {
             app.UseCors(new Microsoft.Owin.Cors.CorsOptions
             {
-                PolicyProvider = new CorsPolicyProvider(Constants.RoutePaths.CorsPaths)
+                PolicyProvider = new CorsPolicyProvider(corsPolicyService, Constants.RoutePaths.CorsPaths)
             });
         }
     }
