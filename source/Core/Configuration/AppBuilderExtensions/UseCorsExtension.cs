@@ -20,7 +20,7 @@ using IdentityServer3.Core.Services;
 
 namespace Owin
 {
-    public  static class UseCorsExtension
+    public static class UseCorsExtension
     {
         public static void UseCors(this IAppBuilder app, ICorsPolicyService corsPolicyService)
         {

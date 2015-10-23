@@ -40,7 +40,7 @@ namespace Owin
     /// </summary>
     [SecuritySafeCritical]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    internal static class OwinExtensions
+    public static class OwinExtensions
     {
         // idsvr : unnecessary because we remove these guards so that multiple copies of middleware can be registered
         //const string MiddlewareRegisteredKey = "idsvr:AutofacMiddelwareRegistered";

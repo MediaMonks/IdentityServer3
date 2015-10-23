@@ -23,7 +23,10 @@ using Microsoft.Owin.StaticFiles;
 
 namespace Owin
 {
-    internal static class UseEmbeddedFileServerExtension
+    /// <summary>
+    /// Use embedded fileserver
+    /// </summary>
+    public static class UseEmbeddedFileServerExtension
     {
         public static IAppBuilder UseEmbeddedFileServer(this IAppBuilder app)
         {

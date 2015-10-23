@@ -24,9 +24,9 @@ using System.Threading.Tasks;
 
 namespace Owin
 {
-    static class ConfigureHttpLoggingExtension
+    public static class ConfigureHttpLoggingExtension
     {
-        static readonly ILog Logger = LogProvider.GetLogger("HTTP Logging");
+        private static readonly ILog Logger = LogProvider.GetLogger("HTTP Logging");
 
         public static IAppBuilder ConfigureHttpLogging(this IAppBuilder app, LoggingOptions options)
         {
@@ -47,7 +47,7 @@ namespace Owin
                         ctx.Response.Body = oldStream;
                         await ms.CopyToAsync(oldStream);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Logger.DebugException("HTTP Response Exception", ex);
                         throw;

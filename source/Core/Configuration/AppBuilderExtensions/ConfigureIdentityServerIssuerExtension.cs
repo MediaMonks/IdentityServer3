@@ -21,7 +21,7 @@ using System;
 
 namespace Owin
 {
-    internal static class ConfigureIdentityServerIssuerExtension
+    public static class ConfigureIdentityServerIssuerExtension
     {
         public static IAppBuilder ConfigureIdentityServerIssuer(this IAppBuilder app, IdentityServerOptions options)
         {

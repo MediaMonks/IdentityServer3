@@ -18,7 +18,7 @@ using IdentityServer3.Core.Extensions;
 
 namespace Owin
 {
-    internal static class ConfigureIdentityServerBaseUrlExtension
+    public static class ConfigureIdentityServerBaseUrlExtension
     {
         public static IAppBuilder ConfigureIdentityServerBaseUrl(this IAppBuilder app, string publicOrigin)
         {

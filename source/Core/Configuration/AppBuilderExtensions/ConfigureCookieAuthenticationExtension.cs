@@ -25,7 +25,7 @@ using System;
 
 namespace Owin
 {
-    internal static class UseCookieAuthenticationExtension
+    public static class UseCookieAuthenticationExtension
     {
         public static IAppBuilder ConfigureCookieAuthentication(this IAppBuilder app, CookieOptions options, IDataProtector dataProtector)
         {

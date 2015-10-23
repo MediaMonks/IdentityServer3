@@ -30,11 +30,11 @@ using System.Linq;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal static class AutofacConfig
+    public static class AutofacConfig
     {
-        const string DecoratorRegistrationName = "decorator.inner";
+        private const string DecoratorRegistrationName = "decorator.inner";
 
-        static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         public static IContainer Configure(IdentityServerOptions options)
         {
@@ -52,12 +52,12 @@ namespace IdentityServer3.Core.Configuration.Hosting
             builder.Register(fact.ScopeStore);
             builder.Register(fact.ClientStore);
             builder.RegisterDecorator<IUserService, ExternalClaimsFilterUserService>(fact.UserService);
-            
+
             // optional from factory
             builder.RegisterDecoratorDefaultInstance<IAuthorizationCodeStore, KeyHashingAuthorizationCodeStore, InMemoryAuthorizationCodeStore>(fact.AuthorizationCodeStore);
             builder.RegisterDecoratorDefaultInstance<ITokenHandleStore, KeyHashingTokenHandleStore, InMemoryTokenHandleStore>(fact.TokenHandleStore);
             builder.RegisterDecoratorDefaultInstance<IRefreshTokenStore, KeyHashingRefreshTokenStore, InMemoryRefreshTokenStore>(fact.RefreshTokenStore);
-            
+
             builder.RegisterDefaultInstance<IConsentStore, InMemoryConsentStore>(fact.ConsentStore);
             builder.RegisterDefaultInstance<ICorsPolicyService, DefaultCorsPolicyService>(fact.CorsPolicyService);
 
@@ -269,6 +269,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                     case RegistrationMode.Singleton:
                         // this is the only option when Instance is provided
                         break;
+
                     case RegistrationMode.InstancePerHttpRequest:
                         throw new InvalidOperationException("RegistrationMode.InstancePerHttpRequest can't be used when an Instance is provided.");
                     case RegistrationMode.InstancePerUse:
@@ -317,6 +318,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                     case RegistrationMode.InstancePerUse:
                         // this is the default behavior
                         break;
+
                     case RegistrationMode.Singleton:
                         throw new InvalidOperationException("RegistrationMode.Singleton can't be used when using a factory function.");
                 }
