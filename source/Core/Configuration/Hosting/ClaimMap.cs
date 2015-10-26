@@ -28,7 +28,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
         {
             var dictionary = new Dictionary<string, string>
             {
-                {"actort", "http://schemas.xmlsoap.org/ws/2009/09/identity/claims/actor"},
+                {"actort", "http://schemas.xmlsoap.org/ws/2009/09/identity/claims/actor"}, //TODO: this looks like typo
                 {"birthdate", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth"},
                 {"email", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"},
                 {"family_name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"},
