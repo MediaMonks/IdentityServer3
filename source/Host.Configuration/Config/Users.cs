@@ -20,7 +20,7 @@ using System.Security.Claims;
 
 namespace IdentityServer3.Host.Config
 {
-    static class Users
+    public static class Users
     {
         public static List<InMemoryUser> Get()
         {

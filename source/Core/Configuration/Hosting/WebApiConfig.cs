@@ -29,7 +29,7 @@ using System.Web.Http.ExceptionHandling;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal static class WebApiConfig
+    public static class WebApiConfig
     {
         public static HttpConfiguration Configure(IdentityServerOptions options, ILifetimeScope container)
         {

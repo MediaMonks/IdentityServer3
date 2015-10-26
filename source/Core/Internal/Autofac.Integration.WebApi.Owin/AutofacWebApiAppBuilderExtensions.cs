@@ -38,7 +38,7 @@ namespace Owin
     /// </summary>
     [SecuritySafeCritical]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    internal static class AutofacWebApiAppBuilderExtensions
+    public static class AutofacWebApiAppBuilderExtensions
     {
         /// <summary>
         /// Extends the Autofac lifetime scope added from the OWIN pipeline through to the Web API dependency scope.

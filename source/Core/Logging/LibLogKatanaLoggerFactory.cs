@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace IdentityServer3.Core.Logging
 {
-    internal class LibLogKatanaLoggerFactory : ILoggerFactory
+    public class LibLogKatanaLoggerFactory : ILoggerFactory
     {
         public ILogger Create(string name)
         {
