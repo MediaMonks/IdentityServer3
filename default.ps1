@@ -64,7 +64,9 @@ task ILMerge -depends Compile {
 		foreach-object {
 			# Exclude IdentityServer3.dll as that will be the primary assembly
 			if ("$_" -ne "IdentityServer3.dll" -and
-			    "$_" -ne "Owin.dll") {
+			    "$_" -ne "Owin.dll" -and
+			    "$_" -ne "Microsoft.Owin.dll" -and
+				"$_" -ne "Autofac.dll") {
 				$input_dlls = "$input_dlls $output_directory\$_"
 			}
 	}
@@ -86,13 +88,13 @@ task CreateNuGetPackage -depends ILMerge {
 	if($preRelease){
 		$packageVersion = "$packageVersion-$preRelease"
 	}
-	
+
 	if ($buildNumber -ne 0){
 		$packageVersion = $packageVersion + "-build" + $buildNumber.ToString().PadLeft(5,'0')
 	}
 
 
-	copy-item $src_directory\IdentityServer3.nuspec $dist_directory
+	copy-item $src_directory\MediaMonks.IdentityServer3.Merged.nuspec $dist_directory
 	copy-item $output_directory\IdentityServer3.xml $dist_directory\lib\net45\
-	exec { . $nuget_path pack $dist_directory\IdentityServer3.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
+	exec { . $nuget_path pack $dist_directory\MediaMonks.IdentityServer3.Merged.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
 }
