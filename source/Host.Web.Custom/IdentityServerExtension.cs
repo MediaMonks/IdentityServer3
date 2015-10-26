@@ -86,36 +86,36 @@ namespace Host.Web.Custom
                 coreApp.ConfigureRequestId();
 
                 idsrvOptions.ProtocolLogoutUrls.Add(Constants.RoutePaths.Oidc.EndSessionCallback);
-                app.ConfigureDataProtectionProvider(idsrvOptions);
+                coreApp.ConfigureDataProtectionProvider(idsrvOptions);
 
-                app.ConfigureIdentityServerBaseUrl(idsrvOptions.PublicOrigin);
-                app.ConfigureIdentityServerIssuer(idsrvOptions);
+                coreApp.ConfigureIdentityServerBaseUrl(idsrvOptions.PublicOrigin);
+                coreApp.ConfigureIdentityServerIssuer(idsrvOptions);
 
                 var container = AutofacConfig.Configure(idsrvOptions);
-                app.UseAutofacMiddleware(container);
+                coreApp.UseAutofacMiddleware(container);
 
-                app.UseCors(container.Resolve<ICorsPolicyService>());
-                app.ConfigureCookieAuthentication(idsrvOptions.AuthenticationOptions.CookieOptions, idsrvOptions.DataProtector);
+                coreApp.UseCors(container.Resolve<ICorsPolicyService>());
+                coreApp.ConfigureCookieAuthentication(idsrvOptions.AuthenticationOptions.CookieOptions, idsrvOptions.DataProtector);
 
                 if (idsrvOptions.PluginConfiguration != null)
                 {
-                    idsrvOptions.PluginConfiguration(app, idsrvOptions);
+                    idsrvOptions.PluginConfiguration(coreApp, idsrvOptions);
                 }
 
                 if (idsrvOptions.AuthenticationOptions.IdentityProviders != null)
                 {
-                    idsrvOptions.AuthenticationOptions.IdentityProviders(app, Constants.ExternalAuthenticationType);
+                    idsrvOptions.AuthenticationOptions.IdentityProviders(coreApp, Constants.ExternalAuthenticationType);
                 }
 
-                app.UseEmbeddedFileServer();
+                coreApp.UseEmbeddedFileServer();
 
-                app.ConfigureHttpLogging(idsrvOptions.LoggingOptions);
+                coreApp.ConfigureHttpLogging(idsrvOptions.LoggingOptions);
 
-                SignatureConversions.AddConversions(app);
+                SignatureConversions.AddConversions(coreApp);
 
                 var httpConfig = WebApiConfig.Configure(idsrvOptions, container);
-                app.UseAutofacWebApi(httpConfig);
-                app.UseWebApi(httpConfig);
+                coreApp.UseAutofacWebApi(httpConfig);
+                coreApp.UseWebApi(httpConfig);
 
                 //using (var child = container.CreateScopeWithEmptyOwinContext())
                 //{
