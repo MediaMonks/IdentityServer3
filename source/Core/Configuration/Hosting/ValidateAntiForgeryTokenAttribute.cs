@@ -30,7 +30,7 @@ using System.Web.Http.Controllers;
 namespace IdentityServer3.Core.Configuration.Hosting
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
-    internal class ValidateAntiForgeryTokenAttribute : PreventUnsupportedRequestMediaTypesAttribute
+    public class ValidateAntiForgeryTokenAttribute : PreventUnsupportedRequestMediaTypesAttribute
     {
         private readonly static ILog Logger = LogProvider.GetCurrentClassLogger();
 

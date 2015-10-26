@@ -19,7 +19,7 @@ using System.Web.Http.Filters;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class NoCacheAttribute : ActionFilterAttribute
+    public class NoCacheAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {

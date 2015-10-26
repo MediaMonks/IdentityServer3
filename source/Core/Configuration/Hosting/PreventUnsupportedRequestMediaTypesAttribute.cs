@@ -25,7 +25,7 @@ using System.Web.Http.Filters;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class PreventUnsupportedRequestMediaTypesAttribute : AuthorizationFilterAttribute
+    public class PreventUnsupportedRequestMediaTypesAttribute : AuthorizationFilterAttribute
     {
         readonly bool allowJson;
         readonly bool allowFormUrlEncoded;

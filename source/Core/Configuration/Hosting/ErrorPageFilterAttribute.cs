@@ -25,7 +25,7 @@ using System.Web.Http.Filters;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class ErrorPageFilterAttribute : ExceptionFilterAttribute
+    public class ErrorPageFilterAttribute : ExceptionFilterAttribute
     {
         private readonly static ILog Logger = LogProvider.GetCurrentClassLogger();
         

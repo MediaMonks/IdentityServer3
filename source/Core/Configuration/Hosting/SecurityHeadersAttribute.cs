@@ -22,7 +22,7 @@ using System.Web.Http.Filters;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class SecurityHeadersAttribute : ActionFilterAttribute
+    public class SecurityHeadersAttribute : ActionFilterAttribute
     {
         public SecurityHeadersAttribute()
         {
