@@ -16,7 +16,9 @@
 
 using FluentAssertions;
 using IdentityServer3.Core.Configuration.Hosting;
+using IdentityServer3.Core.Services;
 using Microsoft.Owin;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,15 +29,25 @@ namespace IdentityServer3.Tests.Configuration
 {
     internal class TestCorsPolicyProvider : CorsPolicyProvider
     {
-        public TestCorsPolicyProvider(IEnumerable<string> paths)
-            : base(paths)
+        private static Mock<ICorsPolicyService> CorsPolicyService;
+
+        static TestCorsPolicyProvider()
         {
+            CorsPolicyService = new Mock<ICorsPolicyService>();
+            CorsPolicyService.Setup(s => s.IsOriginAllowedAsync(It.IsAny<string>())).Returns(Task.FromResult(true));
         }
 
-        //protected override Task<bool> IsOriginAllowed(string origin, IDictionary<string, object> env)
-        //{
-        //    return Task.FromResult(true);
-        //}
+        public TestCorsPolicyProvider(IEnumerable<string> paths)
+            : base(CorsPolicyService.Object, paths)
+        {
+
+        }
+
+        public TestCorsPolicyProvider(ICorsPolicyService corsPolicyService, IEnumerable<string> paths)
+            : base(corsPolicyService, paths)
+        {
+
+        }
     }
 
     public class CorsPolicyProviderTests
@@ -48,7 +60,7 @@ namespace IdentityServer3.Tests.Configuration
             env.Add("owin.RequestPath", path);
 
             var headers = new Dictionary<string, string[]>();
-            headers.Add("Host", new string[]{"identityserver.io"});
+            headers.Add("Host", new string[] { "identityserver.io" });
             env.Add("owin.RequestHeaders", headers);
 
             var ctx = new OwinContext(env);
@@ -71,10 +83,21 @@ namespace IdentityServer3.Tests.Configuration
         [Fact]
         public void ctor_NullPaths_Throws()
         {
+
             Action act = () => new TestCorsPolicyProvider(null);
 
             act.ShouldThrow<ArgumentNullException>()
                 .And.ParamName.Should().Be("allowedPaths");
+        }
+
+        [Fact]
+        public void ctor_NullService_Throws()
+        {
+            var corsPolicyService = new Mock<ICorsPolicyService>();
+            Action act = () => new TestCorsPolicyProvider(null, new List<string>());
+
+            act.ShouldThrow<ArgumentNullException>()
+                .And.ParamName.Should().Be("corsPolicyService");
         }
 
         [Fact]
@@ -88,7 +111,7 @@ namespace IdentityServer3.Tests.Configuration
             var cp = subject.GetCorsPolicyAsync(Request(origin, path)).Result;
             AssertAllowed(origin, cp);
         }
-        
+
         [Fact]
         public void GetCorsPolicyAsync_NoOrigin_DoesNotAllowrigin()
         {
