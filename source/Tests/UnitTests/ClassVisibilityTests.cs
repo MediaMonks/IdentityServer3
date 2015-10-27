@@ -34,7 +34,8 @@ namespace IdentityServer3.Tests
             {
                 "Owin",
                 "Microsoft.Owin",
-                "Autofac"
+                "Autofac",
+                "System.Web.Http" //Microsoft.AspNet.WebApi.Core.5.2.3
             };
             foreach (var referencedAssembly in typeof(Constants).Assembly.GetReferencedAssemblies())
             {

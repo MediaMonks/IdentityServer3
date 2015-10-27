@@ -66,7 +66,8 @@ task ILMerge -depends Compile {
 			if ("$_" -ne "IdentityServer3.dll" -and
 			    "$_" -ne "Owin.dll" -and
 			    "$_" -ne "Microsoft.Owin.dll" -and
-				"$_" -ne "Autofac.dll") {
+				"$_" -ne "Autofac.dll" -and
+				"$_" -ne "System.Web.Http") {
 				$input_dlls = "$input_dlls $output_directory\$_"
 			}
 	}
