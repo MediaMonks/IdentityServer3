@@ -1,6 +1,4 @@
-﻿using IdentityServer3.Core;
-using IdentityServer3.Core.Models;
-/*
+﻿/*
  * Copyright 2014 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +13,9 @@ using IdentityServer3.Core.Models;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+using IdentityServer3.Core;
+using IdentityServer3.Core.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -84,6 +85,7 @@ namespace IdentityServer3.Host.Config
                         Constants.StandardScopes.Profile,
                         Constants.StandardScopes.Email,
                         Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
                         Constants.StandardScopes.OfflineAccess,
                         "read",
                         "write"
@@ -221,12 +223,17 @@ namespace IdentityServer3.Host.Config
                     RedirectUris = new List<string>
                     {
                         "http://localhost:2672/",
+                        "https://localhost:44300/"
                     },
 
                     PostLogoutRedirectUris = new List<string>
                     {
-                        "http://localhost:2672/"
-                    }
+                        "http://localhost:2672/",
+                        "https://localhost:44300/"
+                    },
+
+                    LogoutUri = "https://localhost:44300/Home/OidcSignOut",
+                    LogoutSessionRequired = true
                 },
 
                 new Client

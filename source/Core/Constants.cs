@@ -463,6 +463,9 @@ namespace IdentityServer3.Core
             /// <summary>Authentication Methods References. JSON array of strings that are identifiers for authentication methods used in the authentication.</summary>
             public const string AuthenticationMethod                = "amr";
 
+            /// <summary>Session identifier. This represents a Session of an OP at an RP to a User Agent or device for a logged-in End-User. Its contents are unique to the OP and opaque to the RP.</summary>
+            public const string SessionId                           = "sid";
+
             /// <summary>
             /// Authentication Context Class Reference. String specifying an Authentication Context Class Reference value that identifies the Authentication Context Class that the authentication performed satisfied. 
             /// The value "0" indicates the End-User authentication did not meet the requirements of ISO/IEC 29115 level 1. 
@@ -531,7 +534,8 @@ namespace IdentityServer3.Core
             ClaimTypes.AccessTokenHash,
             ClaimTypes.AuthorizationCodeHash,
             ClaimTypes.Nonce,
-            ClaimTypes.IdentityProvider
+            ClaimTypes.IdentityProvider,
+            ClaimTypes.SessionId
         };
 
         public static readonly string[] OidcProtocolClaimTypes = new string[]
@@ -554,6 +558,7 @@ namespace IdentityServer3.Core
             ClaimTypes.Nonce,
             ClaimTypes.JwtId,
             ClaimTypes.Scope,
+            ClaimTypes.SessionId
         };
 
         public static readonly string[] AuthenticateResultClaimTypes = new string[]
@@ -619,6 +624,7 @@ namespace IdentityServer3.Core
                 public const string Token = "idsrv.oidc.token";
                 public const string Revocation = "idsrv.oidc.revocation";
                 public const string UserInfo = "idsrv.oidc.userinfo";
+                public const string Introspection = "idsrv.oidc.introspection";
             }
         }
 
@@ -644,6 +650,7 @@ namespace IdentityServer3.Core
                 public const string Revocation = "connect/revocation";
                 public const string UserInfo = "connect/userinfo";
                 public const string AccessTokenValidation = "connect/accessTokenValidation";
+                public const string Introspection = "connect/introspect";
                 public const string IdentityTokenValidation = "connect/identityTokenValidation";
                 public const string EndSession = "connect/endsession";
                 public const string EndSessionCallback = "connect/endsessioncallback";
@@ -674,6 +681,7 @@ namespace IdentityServer3.Core
         {
             public const string SigninId                 = "signinid";
             public const string KatanaAuthenticationType = "katanaAuthenticationType";
+            public const string PartialLoginRememberMe = "idsvr:rememberme";
         }
 
         public static class LocalizationCategories
@@ -705,6 +713,11 @@ namespace IdentityServer3.Core
             public const string UserInfoEndpoint = "UserInfoEndpoint";
             public const string ClaimsProviderIdentityToken = "ClaimsProviderIdentityToken";
             public const string ClaimsProviderAccessToken = "ClaimsProviderAccessToken";
+        }
+
+        public static class ClaimValueTypes
+        {
+            public const string Json = "json";
         }
     }
 }

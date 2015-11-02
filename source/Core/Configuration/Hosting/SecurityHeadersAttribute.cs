@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-using Autofac;
 using IdentityServer3.Core.Extensions;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Filters;
 
@@ -38,6 +38,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
             base.OnActionExecuted(actionExecutedContext);
+
             if (actionExecutedContext != null &&
                 actionExecutedContext.Response != null &&
                 actionExecutedContext.Response.IsSuccessStatusCode &&
@@ -50,7 +51,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                     actionExecutedContext.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 }
 
-                if (EnableXfo)
+                if (EnableXfo && actionExecutedContext.Request.GetSuppressXfo() == false)
                 {
                     actionExecutedContext.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 }
@@ -62,7 +63,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
                     if (options.CspOptions.Enabled)
                     {
                         // img-src as * due to client logos
-                        var value = "default-src 'self'; script-src 'self' {0}; style-src 'self' 'unsafe-inline' {1}; img-src {2};";
+                        var value = "default-src 'self'; script-src 'self' {0}; style-src 'self' 'unsafe-inline' {1}; img-src {2}; ";
 
                         if (!String.IsNullOrWhiteSpace(options.CspOptions.FontSrc))
                         {
@@ -71,6 +72,13 @@ namespace IdentityServer3.Core.Configuration.Hosting
                         if (!String.IsNullOrWhiteSpace(options.CspOptions.ConnectSrc))
                         {
                             value += String.Format("connect-src {0};", options.CspOptions.ConnectSrc);
+                        }
+
+                        var iframesOrigins = actionExecutedContext.Request.GetAllowedCspFrameOrigins();
+                        if (iframesOrigins.Any())
+                        {
+                            var frameSrc = iframesOrigins.Aggregate((x, y) => x + " " + y);
+                            value += String.Format("frame-src {0};", frameSrc);
                         }
 
                         value = String.Format(value, options.CspOptions.ScriptSrc, options.CspOptions.StyleSrc, options.CspOptions.ImgSrc ?? "*");
