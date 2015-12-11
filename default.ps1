@@ -76,7 +76,10 @@ task ILMerge -depends Compile {
 	Invoke-Expression "$ilmerge_path /targetplatform:v4 /internalize /allowDup /target:library /out:$dist_directory\lib\net45\IdentityServer3.dll $input_dlls"
 }
 
-task CreateNuGetPackage -depends ILMerge {
+task CreateNuGetPackage -depends Compile { #ILMerge {
+	New-Item $dist_directory\lib\net45 -Type Directory
+	Copy-Item "$output_directory\IdentityServer3.dll" "$dist_directory\lib\net45\IdentityServer3.dll"
+
 	$vSplit = $version.Split('.')
 	if($vSplit.Length -ne 4)
 	{
@@ -95,9 +98,9 @@ task CreateNuGetPackage -depends ILMerge {
 	}
 
 
-	copy-item $src_directory\MediaMonks.IdentityServer3.Merged.nuspec $dist_directory
+	#copy-item $src_directory\MediaMonks.IdentityServer3.Merged.nuspec $dist_directory
 	copy-item $src_directory\MediaMonks.IdentityServer3.nuspec $dist_directory
 	copy-item $output_directory\IdentityServer3.xml $dist_directory\lib\net45\
-	exec { . $nuget_path pack $dist_directory\MediaMonks.IdentityServer3.Merged.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
+	#exec { . $nuget_path pack $dist_directory\MediaMonks.IdentityServer3.Merged.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
 	exec { . $nuget_path pack $dist_directory\MediaMonks.IdentityServer3.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
 }
