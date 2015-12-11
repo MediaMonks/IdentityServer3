@@ -17,7 +17,9 @@
 using Autofac;
 using Autofac.Integration.Owin;
 using IdentityServer3.Core.Configuration;
+using IdentityServer3.Core.Configuration.Hosting;
 using IdentityServer3.Core.Models;
+using IdentityServer3.Core.Services;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -291,8 +293,10 @@ namespace IdentityServer3.Core.Extensions
 
             var options = context.ResolveDependency<IdentityServerOptions>();
 
+            // if they've explicitly configured a URI then use it,
+            // otherwise dynamically calculate it
             var uri = options.IssuerUri;
-            if (String.IsNullOrWhiteSpace(uri))
+            if (uri.IsMissing())
             {
                 uri = context.GetIdentityServerBaseUrl();
                 if (uri.EndsWith("/")) uri = uri.Substring(0, uri.Length - 1);
@@ -431,6 +435,110 @@ namespace IdentityServer3.Core.Extensions
             }
 
             return nv;
+        }
+
+        const string SignOutMessageCookieIdtoRemove = "ids:SignOutMessageCookieIdtoRemove";
+        public static void QueueRemovalOfSignOutMessageCookie(this IOwinContext context, string id)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            if (id != null)
+            {
+                context.Environment[SignOutMessageCookieIdtoRemove] = id;
+            }
+        }
+        public static void ProcessRemovalOfSignOutMessageCookie(this IOwinContext context, MessageCookie<SignOutMessage> signOutMessageCookie)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            if (signOutMessageCookie == null) throw new ArgumentNullException("signOutMessageCookie");
+
+            if (context.Response.StatusCode == 200 && context.Environment.ContainsKey(SignOutMessageCookieIdtoRemove))
+            {
+                signOutMessageCookie.Clear((string)context.Environment[SignOutMessageCookieIdtoRemove]);
+            }
+        }
+
+        const string QueueRenderLoggedOutPageFlag = "ids:QueueRenderLoggedOutPage";
+        public static void QueueRenderLoggedOutPage(this IOwinContext context, string signOutMessageId)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            context.Environment[QueueRenderLoggedOutPageFlag] = signOutMessageId;
+        }
+        public static bool ShouldRenderLoggedOutPage(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            return context.Environment.ContainsKey(QueueRenderLoggedOutPageFlag);
+        }
+        public static void PrepareContextForLoggedOutPage(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+
+            context.Request.Method = "POST";
+            context.Request.ContentType = "application/x-www-form-urlencoded";
+            context.Request.Path = new PathString("/" + Constants.RoutePaths.Logout);
+            context.Request.QueryString = new QueryString("id", (string)context.Environment[QueueRenderLoggedOutPageFlag]);
+
+            context.SetSuppressAntiForgeryCheck();
+        }
+
+        const string SuppressAntiForgeryCheck = "ids:SuppressAntiForgeryCheck";
+        public static void SetSuppressAntiForgeryCheck(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            context.Environment[SuppressAntiForgeryCheck] = true;
+        }
+        public static bool GetSuppressAntiForgeryCheck(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            return context.Environment.ContainsKey(SuppressAntiForgeryCheck) && true.Equals(context.Environment[SuppressAntiForgeryCheck]);
+        }
+
+        public static void ClearAuthenticationCookies(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+
+            context.Authentication.SignOut(
+                Constants.PrimaryAuthenticationType,
+                Constants.ExternalAuthenticationType,
+                Constants.PartialSignInAuthenticationType);
+        }
+
+        public static void SignOutOfExternalIdP(this IOwinContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+
+            // look for idp claim other than IdSvr
+            // if present, then signout of it
+            var user = context.Authentication.User;
+            if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+            {
+                var idp = user.GetIdentityProvider();
+                if (idp != Constants.BuiltInIdentityProvider)
+                {
+                    context.Authentication.SignOut(idp);
+                }
+            }
+        }
+
+        public static async Task CallUserServiceSignOutAsync(this IOwinContext context, string clientId = null)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+
+            var result = await context.Authentication.AuthenticateAsync(Constants.PrimaryAuthenticationType);
+            if (result != null)
+            {
+                var user = result.Identity;
+                if (user != null && user.IsAuthenticated)
+                {
+                    var signOutContext = new SignOutContext
+                    {
+                        Subject = new ClaimsPrincipal(user),
+                        ClientId = clientId
+                    };
+
+                    var userService = context.ResolveDependency<IUserService>();
+                    await userService.SignOutAsync(signOutContext);
+                }
+            }
         }
     }
 }

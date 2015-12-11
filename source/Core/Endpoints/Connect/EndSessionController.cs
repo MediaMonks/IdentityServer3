@@ -32,9 +32,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IdentityServer3.Core.Services.Default;
+using System.Collections.Specialized;
 
 namespace IdentityServer3.Core.Endpoints
 {
+    using IdentityServer3.Core.Models;
+
     /// <summary>
     /// OpenID Connect end session endpoint
     /// </summary>
@@ -75,12 +78,27 @@ namespace IdentityServer3.Core.Endpoints
         /// GET
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet, HttpPost]
         public async Task<IHttpActionResult> Logout()
         {
             Logger.Info("Start end session request");
 
-            var result = await _validator.ValidateAsync(Request.RequestUri.ParseQueryString(), User as ClaimsPrincipal);
+            NameValueCollection parameters;
+
+            if (Request.Method == HttpMethod.Get)
+            {
+                parameters = Request.RequestUri.ParseQueryString();
+            }
+            else if (Request.Method == HttpMethod.Post)
+            {
+                parameters = await Request.GetOwinContext().ReadRequestFormAsNameValueCollectionAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException("invalid HTTP method");
+            }
+
+            var result = await _validator.ValidateAsync(parameters, User as ClaimsPrincipal);
             if (result.IsError)
             {
                 // if anything went wrong, ignore the params the RP sent
@@ -107,6 +125,9 @@ namespace IdentityServer3.Core.Endpoints
                 Logger.Error("Invalid sid passed to end session callback");
                 return StatusCode(HttpStatusCode.BadRequest);
             }
+
+            // since we verified via sid param, we can allow rendering in iframes
+            Request.SetSuppressXfo();
 
             // get URLs for iframes
             var urls = await GetClientEndSessionUrlsAsync();
@@ -157,14 +178,12 @@ namespace IdentityServer3.Core.Endpoints
             // read client list to get URLs for client logout endpoints
             var clientIds = _clientListCookie.GetClients();
 
-            // fetch the clients in parallel
-            var tasks =
-                from clientId in clientIds
-                select _clientStore.FindClientByIdAsync(clientId);
-            await Task.WhenAll(tasks);
-
-            // get clients located and build the iframe urls
-            var clients = tasks.Select(x => x.Result);
+            // Fetch the Clients for each clientid
+            var clients = new List<Client>();
+            foreach (var clientId in clientIds)
+            {
+                clients.Add(await _clientStore.FindClientByIdAsync(clientId));
+            }
 
             // get user's session id. session id will possibly 
             // be needed below to pass to client's endpoint

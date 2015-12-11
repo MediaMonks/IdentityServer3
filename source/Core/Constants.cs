@@ -80,6 +80,7 @@ namespace IdentityServer3.Core
             public const string RedirectUri  = "redirect_uri";
             public const string ClientId     = "client_id";
             public const string ClientSecret = "client_secret";
+            public const string ClientAssertion = "client_assertion";
             public const string Assertion    = "assertion";
             public const string Code         = "code";
             public const string RefreshToken = "refresh_token";
@@ -680,6 +681,7 @@ namespace IdentityServer3.Core
         public static class Authentication
         {
             public const string SigninId                 = "signinid";
+            public const string SignoutId                = "id";
             public const string KatanaAuthenticationType = "katanaAuthenticationType";
             public const string PartialLoginRememberMe = "idsvr:rememberme";
         }

@@ -601,24 +601,20 @@ namespace IdentityServer3.Core.Endpoints
             }
 
             Logger.Info("Clearing cookies");
-            signOutMessageCookie.Clear(id);
-            ClearAuthenticationCookies();
-            SignOutOfExternalIdP();
-            
+            context.QueueRemovalOfSignOutMessageCookie(id);
+            context.ClearAuthenticationCookies();
+            context.SignOutOfExternalIdP();
+
+            string clientId = null;
+            var message = signOutMessageCookie.Read(id);
+            if (message != null)
+            {
+                clientId = message.ClientId;
+            }
+            await context.CallUserServiceSignOutAsync(clientId);
+
             if (user != null && user.Identity.IsAuthenticated)
             {
-                var message = signOutMessageCookie.Read(id);
-                var signOutContext = new SignOutContext
-                {
-                    Subject = user
-                };
-
-                if (message != null)
-                {
-                    signOutContext.ClientId = message.ClientId;
-                }
-
-                await this.userService.SignOutAsync(signOutContext);
                 await eventService.RaiseLogoutEventAsync(user, id, message);
             }
 
@@ -817,29 +813,6 @@ namespace IdentityServer3.Core.Endpoints
             context.Authentication.SignOut(
                 Constants.ExternalAuthenticationType,
                 Constants.PartialSignInAuthenticationType);
-        }
-
-        private void ClearAuthenticationCookies()
-        {
-            context.Authentication.SignOut(
-                Constants.PrimaryAuthenticationType,
-                Constants.ExternalAuthenticationType,
-                Constants.PartialSignInAuthenticationType);
-        }
-
-        private void SignOutOfExternalIdP()
-        {
-            // look for idp claim other than IdSvr
-            // if present, then signout of it
-            var user = User as ClaimsPrincipal;
-            if (user != null && user.Identity.IsAuthenticated)
-            {
-                var idp = user.GetIdentityProvider();
-                if (idp != Constants.BuiltInIdentityProvider)
-                {
-                    context.Authentication.SignOut(idp);
-                }
-            }
         }
 
         async Task<bool> IsLocalLoginAllowedForClient(SignInMessage message)
