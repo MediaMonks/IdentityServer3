@@ -19,7 +19,7 @@ using System;
 
 namespace Owin
 {
-    internal static class ConfigureRenderLoggedOutPageExtension
+    public static class ConfigureRenderLoggedOutPageExtension
     {
         public static IAppBuilder ConfigureRenderLoggedOutPage(this IAppBuilder app)
         {

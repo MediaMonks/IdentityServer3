@@ -50,6 +50,12 @@ namespace Host.Web.Custom
                     Factory = factory,
                     SigningCertificate = Cert.Load(),
 
+                    Endpoints = new EndpointOptions
+                    {
+                        // replaced by the introspection endpoint in v2.2
+                        EnableAccessTokenValidationEndpoint = false
+                    },
+
                     AuthenticationOptions = new AuthenticationOptions
                     {
                         IdentityProviders = ConfigureIdentityProviders
@@ -84,12 +90,13 @@ namespace Host.Web.Custom
                 }
 
                 coreApp.ConfigureRequestId();
-
-                idsrvOptions.ProtocolLogoutUrls.Add(Constants.RoutePaths.Oidc.EndSessionCallback);
                 coreApp.ConfigureDataProtectionProvider(idsrvOptions);
-
                 coreApp.ConfigureIdentityServerBaseUrl(idsrvOptions.PublicOrigin);
                 coreApp.ConfigureIdentityServerIssuer(idsrvOptions);
+
+                // this needs to be earlier than the autofac middleware so anything is disposed and re-initialized
+                // if we send the request back into the pipeline to render the logged out page
+                coreApp.ConfigureRenderLoggedOutPage();
 
                 var container = AutofacConfig.Configure(idsrvOptions);
                 coreApp.UseAutofacMiddleware(container);

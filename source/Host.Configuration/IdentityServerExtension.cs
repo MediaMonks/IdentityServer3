@@ -46,10 +46,7 @@ namespace Owin
                     .UseInMemoryClients(Clients.Get())
                     .UseInMemoryScopes(Scopes.Get());
 
-                factory.CustomGrantValidators.Add(
-                    new Registration<ICustomGrantValidator>(typeof(CustomGrantValidator)));
-                factory.CustomGrantValidators.Add(
-                    new Registration<ICustomGrantValidator>(typeof(AnotherCustomGrantValidator)));
+                factory.AddCustomGrantValidators();
 
                 factory.ConfigureClientStoreCache();
                 factory.ConfigureScopeStoreCache();
