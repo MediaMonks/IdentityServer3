@@ -76,7 +76,7 @@ namespace IdentityServer3.Core.Configuration.Hosting
             }
             else
             {
-                builder.Register(new Registration<ITokenSigningService>(r => new DefaultTokenSigningService(r.Resolve<ISigningKeyService>())));
+                builder.Register(new Registration<ITokenSigningService>(r => new DefaultTokenSigningService(r.Resolve<ISigningKeyService>(), options)));
             }
 
             builder.RegisterDefaultType<ISigningKeyService, DefaultSigningKeyService>(fact.SigningKeyService);

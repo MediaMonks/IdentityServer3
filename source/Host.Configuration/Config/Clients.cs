@@ -49,6 +49,7 @@ namespace IdentityServer3.Host.Config
                     {
                         // MVC code client manual
                         "https://localhost:44312/callback",
+                        "https://www.getpostman.com/oauth2/callback"
                     },
 
                     AllowedScopes = new List<string>
@@ -62,7 +63,7 @@ namespace IdentityServer3.Host.Config
                         "write"
                     },
                     
-                    AccessTokenType = AccessTokenType.Reference,
+                    AccessTokenType = AccessTokenType.Jwt,
                 },
 
                 new Client

@@ -230,5 +230,10 @@ namespace IdentityServer3.Core.Configuration
                 return keys;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the amount of Leeway to give the NotBefore claim
+        /// </summary>
+        public TimeSpan NotBeforeLeeway { get; set; }
     }
 }

@@ -62,8 +62,9 @@ namespace IdentityServer3.Core.Services.Default
         /// Initializes a new instance of the <see cref="DefaultTokenSigningService"/> class.
         /// </summary>
         /// <param name="keyService">The signing key service.</param>
-        public DefaultTokenSigningService(ISigningKeyService keyService)
+        public DefaultTokenSigningService(ISigningKeyService keyService, IdentityServerOptions options)
         {
+            _options = options;
             _keyService = keyService;
         }
 
@@ -112,7 +113,7 @@ namespace IdentityServer3.Core.Services.Default
                 token.Issuer,
                 token.Audience,
                 null,
-                DateTimeHelper.UtcNow,
+                DateTimeHelper.UtcNow.Add(-_options.NotBeforeLeeway),
                 DateTimeHelper.UtcNow.AddSeconds(token.Lifetime));
 
             var amrClaims = token.Claims.Where(x => x.Type == Constants.ClaimTypes.AuthenticationMethod);

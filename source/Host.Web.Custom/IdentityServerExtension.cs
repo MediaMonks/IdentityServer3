@@ -18,6 +18,7 @@ using System.IdentityModel.Tokens;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Infrastructure;
 using Autofac;
+using System;
 
 namespace Host.Web.Custom
 {
@@ -62,6 +63,7 @@ namespace Host.Web.Custom
                         //EnablePostSignOutAutoRedirect = true
                     },
 
+                    NotBeforeLeeway = TimeSpan.FromMinutes(1)
                     //LoggingOptions = new LoggingOptions
                     //{
                     //    EnableKatanaLogging = true
