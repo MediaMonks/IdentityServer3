@@ -47,7 +47,7 @@ namespace IdentityServer3.Tests
             }
             
         }
-        [Fact]
+        [Fact(Skip = "No IlMerge")]
         public void NoTypesShouldExposeAnyIlMergedAssemblies()
         {
             var assembly = typeof(Constants).Assembly;
