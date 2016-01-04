@@ -18,7 +18,7 @@ using Microsoft.Owin.Security.DataProtection;
 
 namespace IdentityServer3.Core.Configuration.Hosting
 {
-    internal class HostDataProtector : IDataProtector
+    public class HostDataProtector : IDataProtector
     {
         private readonly IDataProtectionProvider _provider;
 
