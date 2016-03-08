@@ -65,6 +65,8 @@ namespace Owin
                 app.SetLoggerFactory(new LibLogKatanaLoggerFactory());
             }
 
+            app.UseEmbeddedFileServer();
+
             app.ConfigureRequestId();
             app.ConfigureDataProtectionProvider(options);
             app.ConfigureIdentityServerBaseUrl(options.PublicOrigin);
@@ -93,8 +95,6 @@ namespace Owin
             {
                 options.AuthenticationOptions.IdentityProviders(app, Constants.ExternalAuthenticationType);
             }
-
-            app.UseEmbeddedFileServer();
 
             app.ConfigureHttpLogging(options.LoggingOptions);
 

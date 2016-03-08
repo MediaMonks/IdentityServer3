@@ -22,6 +22,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using IdentityServer3.Core.Extensions;
 using Xunit;
 using CorsPolicy = System.Web.Cors.CorsPolicy;
 
@@ -58,6 +59,7 @@ namespace IdentityServer3.Tests.Configuration
             env.Add("owin.RequestScheme", "https");
             env.Add("owin.RequestPathBase", "");
             env.Add("owin.RequestPath", path);
+            env.SetIdentityServerHost("https://identityserver.io");
 
             var headers = new Dictionary<string, string[]>();
             headers.Add("Host", new string[] { "identityserver.io" });

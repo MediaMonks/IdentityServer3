@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-using IdentityServer3.Core;
+using Host.Configuration;
 using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Configuration.Hosting;
-using IdentityServer3.Core.Services;
-using IdentityServer3.Core.Services.Default;
-using IdentityServer3.Host;
 using IdentityServer3.Host.Config;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Facebook;
@@ -27,7 +24,6 @@ using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Microsoft.Owin.Security.Twitter;
 using Microsoft.Owin.Security.WsFederation;
-using System.Collections.Generic;
 
 namespace Owin
 {
@@ -47,6 +43,7 @@ namespace Owin
                     .UseInMemoryScopes(Scopes.Get());
 
                 factory.AddCustomGrantValidators();
+                factory.AddCustomTokenResponseGenerator();
 
                 factory.ConfigureClientStoreCache();
                 factory.ConfigureScopeStoreCache();
@@ -65,7 +62,8 @@ namespace Owin
 
                     AuthenticationOptions = new AuthenticationOptions
                     {
-                        IdentityProviders = ConfigureIdentityProviders
+
+                        IdentityProviders = ConfigureIdentityProviders,
                         //EnablePostSignOutAutoRedirect = true
                     },
 

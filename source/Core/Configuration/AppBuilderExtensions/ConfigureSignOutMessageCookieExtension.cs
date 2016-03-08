@@ -21,7 +21,7 @@ using System;
 
 namespace Owin
 {
-    internal static class SignOutMessageCookieExtension
+    public static class SignOutMessageCookieExtension
     {
         public static IAppBuilder ConfigureSignOutMessageCookie(this IAppBuilder app)
         {

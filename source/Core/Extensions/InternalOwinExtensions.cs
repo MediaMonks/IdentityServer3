@@ -51,7 +51,7 @@ namespace IdentityServer3.Core.Extensions
         }
     }
 
-    internal static class InternalOwinExtensions
+    public static class InternalOwinExtensions
     {
         internal static void SetRequestId(this IDictionary<string, object> env, string id)
         {
@@ -291,18 +291,7 @@ namespace IdentityServer3.Core.Extensions
         {
             if (context == null) throw new ArgumentNullException("context");
 
-            var options = context.ResolveDependency<IdentityServerOptions>();
-
-            // if they've explicitly configured a URI then use it,
-            // otherwise dynamically calculate it
-            var uri = options.IssuerUri;
-            if (uri.IsMissing())
-            {
-                uri = context.GetIdentityServerBaseUrl();
-                if (uri.EndsWith("/")) uri = uri.Substring(0, uri.Length - 1);
-            }
-
-            return uri;
+            return context.Environment.GetIdentityServerIssuerUri();
         }
 
         public static string GetIdentityServerLogoutUrl(this IOwinContext context)

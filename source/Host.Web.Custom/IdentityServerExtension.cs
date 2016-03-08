@@ -19,6 +19,7 @@ using Microsoft.Owin.Logging;
 using Microsoft.Owin.Infrastructure;
 using Autofac;
 using System;
+using Host.Configuration;
 
 namespace Host.Web.Custom
 {
@@ -37,10 +38,8 @@ namespace Host.Web.Custom
                     .UseInMemoryClients(Clients.Get())
                     .UseInMemoryScopes(Scopes.Get());
 
-                factory.CustomGrantValidators.Add(
-                    new Registration<ICustomGrantValidator>(typeof(CustomGrantValidator)));
-                factory.CustomGrantValidators.Add(
-                    new Registration<ICustomGrantValidator>(typeof(AnotherCustomGrantValidator)));
+                factory.AddCustomGrantValidators();
+                factory.AddCustomTokenResponseGenerator();
 
                 factory.ConfigureClientStoreCache();
                 factory.ConfigureScopeStoreCache();
@@ -91,6 +90,8 @@ namespace Host.Web.Custom
                     coreApp.SetLoggerFactory(new LibLogKatanaLoggerFactory());
                 }
 
+                coreApp.UseEmbeddedFileServer();
+
                 coreApp.ConfigureRequestId();
                 coreApp.ConfigureDataProtectionProvider(idsrvOptions);
                 coreApp.ConfigureIdentityServerBaseUrl(idsrvOptions.PublicOrigin);
@@ -106,6 +107,9 @@ namespace Host.Web.Custom
                 coreApp.UseCors(container.Resolve<ICorsPolicyService>());
                 coreApp.ConfigureCookieAuthentication(idsrvOptions.AuthenticationOptions.CookieOptions, idsrvOptions.DataProtector);
 
+                // this needs to be before external middleware
+                coreApp.ConfigureSignOutMessageCookie();
+
                 if (idsrvOptions.PluginConfiguration != null)
                 {
                     idsrvOptions.PluginConfiguration(coreApp, idsrvOptions);
@@ -116,7 +120,6 @@ namespace Host.Web.Custom
                     idsrvOptions.AuthenticationOptions.IdentityProviders(coreApp, Constants.ExternalAuthenticationType);
                 }
 
-                coreApp.UseEmbeddedFileServer();
 
                 coreApp.ConfigureHttpLogging(idsrvOptions.LoggingOptions);
 
