@@ -59,7 +59,8 @@ namespace IdentityServer3.Core.Results
                 access_token = _response.AccessToken,
                 refresh_token = _response.RefreshToken,
                 expires_in = _response.AccessTokenLifetime,
-                token_type = Constants.TokenTypes.Bearer
+                token_type = _response.TokenType,
+                alg = _response.Algorithm
             };
 
             var jobject = JObject.FromObject(dto, Serializer);
@@ -82,7 +83,7 @@ namespace IdentityServer3.Core.Results
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 //Content = new ObjectContent<JObject>(jobject, new JsonMediaTypeFormatter())
-                Content = new StringContent(jobject.ToString(), Encoding.UTF8, "application/json")
+                Content = new StringContent(jobject.ToString(Formatting.None), Encoding.UTF8, "application/json")
             };
 
             Logger.Info("Returning token response.");
@@ -96,6 +97,7 @@ namespace IdentityServer3.Core.Results
             public int expires_in { get; set; }
             public string token_type { get; set; }
             public string refresh_token { get; set; }
+            public string alg { get; set; }
         }    
     }
 }

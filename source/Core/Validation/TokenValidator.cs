@@ -113,7 +113,7 @@ namespace IdentityServer3.Core.Validation
             var client = await _clients.FindClientByIdAsync(clientId);
             if (client == null)
             {
-                LogError("Unknown or diabled client.");
+                LogError("Unknown or disabled client.");
                 return Invalid(Constants.ProtectedResourceErrors.InvalidToken);
             }
 
@@ -282,7 +282,7 @@ namespace IdentityServer3.Core.Validation
             }
             catch (Exception ex)
             {
-                Logger.ErrorException("JWT token validation error", ex);
+                Logger.InfoException("JWT token validation error", ex);
                 return Invalid(Constants.ProtectedResourceErrors.InvalidToken);
             }
         }

@@ -151,6 +151,10 @@ namespace IdentityServer3.Core.Validation
                 {
                     message += ": " + customResult.Error;
                 }
+                else
+                {
+                    customResult.Error = Constants.TokenErrors.InvalidRequest;
+                }
 
                 LogError(message);
                 return customResult;
@@ -314,6 +318,27 @@ namespace IdentityServer3.Core.Validation
                 await RaiseFailedAuthorizationCodeRedeemedEventAsync(code, error);
 
                 return Invalid(Constants.TokenErrors.InvalidRequest);
+            }
+
+            /////////////////////////////////////////////
+            // validate token type and PoP parameters if pop token is requested
+            /////////////////////////////////////////////
+            var tokenType = parameters.Get("token_type");
+            if (tokenType != null && tokenType == Constants.ResponseTokenTypes.PoP)
+            {
+                var result = ValidatePopParameters(parameters);
+                if (result.IsError)
+                {
+                    var error = "PoP parameter validation failed: " + result.ErrorDescription;
+                    LogError(error);
+                    await RaiseFailedAuthorizationCodeRedeemedEventAsync(code, error);
+
+                    return Invalid(result.Error, result.ErrorDescription);
+                }
+                else
+                {
+                    _validatedRequest.RequestedTokenType = RequestedTokenTypes.PoP;
+                }
             }
 
             Logger.Info("Validation of authorization code token request success");
@@ -617,6 +642,27 @@ namespace IdentityServer3.Core.Validation
                 return Invalid(Constants.TokenErrors.InvalidRequest);
             }
 
+            /////////////////////////////////////////////
+            // validate token type and PoP parameters if pop token is requested
+            /////////////////////////////////////////////
+            var tokenType = parameters.Get("token_type");
+            if (tokenType != null && tokenType == "pop")
+            {
+                var result = ValidatePopParameters(parameters);
+                if (result.IsError)
+                {
+                    var error = "PoP parameter validation failed: " + result.ErrorDescription;
+                    LogError(error);
+                    await RaiseRefreshTokenRefreshFailureEventAsync(refreshTokenHandle, error);
+
+                    return Invalid(result.Error, result.ErrorDescription);
+                }
+                else
+                {
+                    _validatedRequest.RequestedTokenType = RequestedTokenTypes.PoP;
+                }
+            }
+
             Logger.Info("Validation of refresh token request success");
             return Valid();
         }
@@ -680,7 +726,7 @@ namespace IdentityServer3.Core.Validation
                 if (result.Error.IsPresent())
                 {
                     LogError("Invalid custom grant: " + result.Error);
-                    return Invalid(result.Error);
+                    return Invalid(result.Error, result.ErrorDescription ?? "");
                 }
                 else
                 {
@@ -779,6 +825,48 @@ namespace IdentityServer3.Core.Validation
             return TimeConstantComparer.IsEqual(transformedCodeVerifier.Sha256(), codeChallenge);
         }
 
+        private TokenRequestValidationResult ValidatePopParameters(NameValueCollection parameters)
+        {
+            var invalid = new TokenRequestValidationResult
+            {
+                IsError = true,
+                Error = Constants.TokenErrors.InvalidRequest
+            };
+
+            // check optional alg
+            var alg = parameters.Get(Constants.TokenRequest.Algorithm);
+            if (alg != null)
+            {
+                // for now we only support asymmetric
+                if (!Constants.AllowedProofKeyAlgorithms.Contains(alg))
+                {
+                    invalid.ErrorDescription = "invalid alg.";
+                    return invalid;
+                }
+
+                _validatedRequest.ProofKeyAlgorithm = alg;
+            }
+            
+            // key is required - for now we only support client generated keys
+            var key = parameters.Get(Constants.TokenRequest.Key);
+            if (key == null)
+            {
+                invalid.ErrorDescription = "key is required.";
+                return invalid;
+            }
+            if (key.Length > _options.InputLengthRestrictions.ProofKey)
+            {
+                invalid.ErrorDescription = "invalid key.";
+                Logger.Warn("Proof key exceeds max allowed length.");
+                return invalid;
+            }
+
+            var jwk = string.Format("{{ \"jwk\":{0} }}", Encoding.UTF8.GetString(Base64Url.Decode(key)));
+            _validatedRequest.ProofKey = jwk;
+
+            return new TokenRequestValidationResult { IsError = false };
+        }
+
         private TokenRequestValidationResult Valid()
         {
             return new TokenRequestValidationResult
@@ -787,23 +875,20 @@ namespace IdentityServer3.Core.Validation
             };
         }
 
-        private TokenRequestValidationResult Invalid(string error)
+        private TokenRequestValidationResult Invalid(string error, string errorDescription = "")
         {
-            return new TokenRequestValidationResult
+            var result = new TokenRequestValidationResult
             {
                 IsError = true,
                 Error = error
             };
-        }
 
-        private TokenRequestValidationResult Invalid(string error, string errorDescription)
-        {
-            return new TokenRequestValidationResult
+            if (errorDescription.IsPresent())
             {
-                IsError = true,
-                Error = error,
-                ErrorDescription = errorDescription
-            };
+                result.ErrorDescription = errorDescription;
+            }
+
+            return result;
         }
 
         private void LogError(string message)

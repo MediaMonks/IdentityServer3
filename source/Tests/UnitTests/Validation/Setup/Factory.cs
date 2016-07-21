@@ -37,7 +37,7 @@ namespace IdentityServer3.Tests.Validation
         public static DefaultTokenSigningService CreateDefaultTokenSigningService()
         {
             var options = TestIdentityServerOptions.Create();
-            return new DefaultTokenSigningService(new DefaultSigningKeyService(options), options);
+            return new DefaultTokenSigningService(new DefaultSigningKeyService(options));
         }
 
         //public static ClientValidator CreateClientValidator(

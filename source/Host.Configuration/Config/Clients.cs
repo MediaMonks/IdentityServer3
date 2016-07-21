@@ -27,287 +27,57 @@ namespace IdentityServer3.Host.Config
         {
             return new List<Client>
             {
-                new Client
-                {
-                    ClientName = "Code Flow Client Demo",
-                    Enabled = true,
 
-                    ClientId = "codeclient",
-                    ClientSecrets = new List<Secret>
-                    { 
-                        new Secret("secret".Sha256())
-                    },
-
-                    Flow = Flows.AuthorizationCode,
-                    
-                    RequireConsent = true,
-                    AllowRememberConsent = true,
-                    
-                    ClientUri = "https://identityserver.io",
-                    
-                    RedirectUris = new List<string>
-                    {
-                        // MVC code client manual
-                        "https://localhost:44312/callback",
-                        "https://www.getpostman.com/oauth2/callback"
-                    },
-
-                    AllowedScopes = new List<string>
-                    {
-                        Constants.StandardScopes.OpenId,
-                        Constants.StandardScopes.Profile,
-                        Constants.StandardScopes.Email,
-                        Constants.StandardScopes.Roles,
-                        Constants.StandardScopes.OfflineAccess,
-                        "read",
-                        "write"
-                    },
-                    
-                    AccessTokenType = AccessTokenType.Jwt,
-                },
-
-                new Client
-                {
-                    ClientName = "Implicit Client Demo",
-                    Enabled = true,
-
-                    ClientId = "implicitclient",
-                    ClientSecrets = new List<Secret>
-                    { 
-                        new Secret("secret".Sha256())
-                    },
-
-                    Flow = Flows.Implicit,
-                    
-                    AllowedScopes = new List<string>
-                    {
-                        Constants.StandardScopes.OpenId,
-                        Constants.StandardScopes.Profile,
-                        Constants.StandardScopes.Email,
-                        Constants.StandardScopes.Roles,
-                        Constants.StandardScopes.Address,
-                        Constants.StandardScopes.OfflineAccess,
-                        "read",
-                        "write"
-                    },
-                    
-                    ClientUri = "https://identityserver.io",
-
-                    RequireConsent = true,
-                    AllowRememberConsent = true,
-
-                    RedirectUris = new List<string>
-                    {
-                        // JS client with popup login dialog
-                        "http://localhost:37045/index.html",
-                        "http://localhost:37046/index.html",
-                        "http://localhost:37047/index.html",
-                        "http://localhost:37047/callback.html",
-                        "http://localhost:37047/modal.html",
-                        "http://localhost:37047/popup.html",
-                        "http://localhost:37047/frame.html",
-
-                        // "simple JS client"
-                        "https://localhost:44331/Home/Callback",
-
-                        // OAuthJS client
-                        "http://localhost:23453/callback.html",
-                        "http://localhost:23453/frame.html",
-                        "http://localhost:23453/modal.html",
-                        "http://localhost:23453/popup.html",
-
-                        // WPF client
-                        "oob://localhost/wpfclient",
-                        
-                        // WinRT client
-                        "ms-app://s-1-15-2-1677770454-1667073387-2045065244-1646983296-4049597744-3433330513-3528227871/",
-
-                        // JavaScript client
-                        "http://localhost:21575/index.html",
-                        "http://localhost:21575/silent_renew.html",
-
-                        // MVC form post sample
-                        "http://localhost:11716/account/signInCallback",
-
-                        // OWIN middleware client
-                        "http://localhost:2671/",
-                        "https://localhost:44301/"
-                    },
-
-                    PostLogoutRedirectUris = new List<string>
-                    {
-                        "http://localhost:23453/index.html",
-                        "http://localhost:21575/index.html",
-                        "http://localhost:37045/index.html",
-                        "http://localhost:37046/index.html",
-                        "http://localhost:37047/index.html"
-                    },
-
-                    AllowedCorsOrigins = new List<string>{
-                        "http://localhost:21575",
-                        "http://localhost:37045",
-                        "http://localhost:37046",
-                        "http://localhost:37047",
-                        "http://localhost:23453"
-                    },
-
-                    LogoutUri = "https://localhost:44301/Home/SignoutCleanup",
-                    LogoutSessionRequired = true,
-                    
-                    IdentityTokenLifetime = 360,
-                    AccessTokenLifetime = 3600,
-                    AccessTokenType = AccessTokenType.Reference
-                },
-
-                new Client
-                {
-                    ClientName = "Hybrid Native Client Demo",
-                    Enabled = true,
-                    ClientId = "hybridclient",
-                    ClientSecrets = new List<Secret>
-                    { 
-                        new Secret("secret".Sha256())
-                    },
-
-                    Flow = Flows.Hybrid,
-                    
-                    AllowedScopes = new List<string>
-                    {
-                        Constants.StandardScopes.OpenId,
-                        Constants.StandardScopes.Profile,
-                        Constants.StandardScopes.Email,
-                        Constants.StandardScopes.Roles,
-                        Constants.StandardScopes.OfflineAccess,
-                        "read",
-                        "write"
-                    },
-                    
-                    ClientUri = "https://identityserver.io",
-
-                    RequireConsent = true,
-                    AllowRememberConsent = true,
-                    
-                    RedirectUris = new List<string>
-                    {
-                        "oob://localhost/wpfclient"
-                    }
-                },
-
-                new Client
-                {
-                    ClientName = "Katana Hybrid Client Demo",
-                    Enabled = true,
-                    ClientId = "katanaclient",
-                    ClientSecrets = new List<Secret>
-                    { 
-                        new Secret("secret".Sha256())
-                    },
-
-                    Flow = Flows.Hybrid,
-                    
-                    AllowedScopes = new List<string>
-                    {
-                        Constants.StandardScopes.OpenId,
-                        Constants.StandardScopes.Profile,
-                        Constants.StandardScopes.Email,
-                        Constants.StandardScopes.Roles,
-                        Constants.StandardScopes.OfflineAccess,
-                        "read",
-                        "write"
-                    },
-                    
-                    ClientUri = "https://identityserver.io",
-
-                    RequireConsent = false,
-                    AccessTokenType = AccessTokenType.Reference,
-                    
-                    RedirectUris = new List<string>
-                    {
-                        "http://localhost:2672/",
-                        "https://localhost:44300/"
-                    },
-
-                    PostLogoutRedirectUris = new List<string>
-                    {
-                        "http://localhost:2672/",
-                        "https://localhost:44300/"
-                    },
-
-                    LogoutUri = "https://localhost:44300/Home/OidcSignOut",
-                    LogoutSessionRequired = true
-                },
-
+                /////////////////////////////////////////////////////////////
+                // Console Client Credentials Sample
+                /////////////////////////////////////////////////////////////
                 new Client
                 {
                     ClientName = "Client Credentials Flow Client",
                     Enabled = true,
-                    ClientId = "client",
-                    
-                    ClientSecrets = new List<Secret>
-                    { 
-                        new Secret("secret".Sha256())
-                    },
-
+                    ClientId = "clientcredentials.client",
                     Flow = Flows.ClientCredentials,
 
-                    AllowedScopes = new List<string> 
-                    {
-                        "read", 
-                        "write"
-                    },
-                    
-                    Claims = new List<Claim>
-                    {
-                        new Claim("client_type", "headless")
-                    },
-                    PrefixClientClaims = false
-                },
-
-                new Client
-                {
-                    ClientName = "Client Credentials Flow Client with Client Certificate",
-                    Enabled = true,
-                    
-                    ClientId = "certclient",
                     ClientSecrets = new List<Secret>
-                    { 
-                        new Secret
                         {
-                            Value = "61B754C541BBCFC6A45A9E9EC5E47D8702B78C29",
-                            Type = Constants.SecretTypes.X509CertificateThumbprint,
-                        }
-                    },
+                            new Secret("secret".Sha256()),
+                            new Secret
+                            {
+                                Value = "61B754C541BBCFC6A45A9E9EC5E47D8702B78C29",
+                                Type = Constants.SecretTypes.X509CertificateThumbprint,
+                                Description = "Client Certificate"
+                            },
+                        },
 
-                    Flow = Flows.ClientCredentials,
-                    
-                    AllowedScopes = new List<string> 
-                    {
-                        "read", 
-                        "write"
-                    },
+                    AllowedScopes = new List<string>
+                        {
+                            "read",
+                            "write"
+                        },
 
                     Claims = new List<Claim>
-                    {
-                        new Claim("client_type", "headless")
-                    },
-                    PrefixClientClaims = false,
+                        {
+                            new Claim("location", "datacenter")
+                        }
                 },
 
+                /////////////////////////////////////////////////////////////
+                // Console Custom Grant Type Sample
+                /////////////////////////////////////////////////////////////
                 new Client
                 {
                     ClientName = "Custom Grant Client",
-                    Enabled = true,
-                    ClientId = "customclient",
+                    ClientId = "customgrant.client",
+                    Flow = Flows.Custom,
+
                     ClientSecrets = new List<Secret>
-                    { 
+                    {
                         new Secret("secret".Sha256())
                     },
 
-                    Flow = Flows.Custom,
-
-                    AllowedScopes = new List<string> 
+                    AllowedScopes = new List<string>
                     {
-                        "read", 
+                        "read",
                         "write"
                     },
 
@@ -317,45 +87,429 @@ namespace IdentityServer3.Host.Config
                     }
                 },
 
+                /////////////////////////////////////////////////////////////
+                // Resource Owner Flow Samples
+                /////////////////////////////////////////////////////////////
                 new Client
                 {
                     ClientName = "Resource Owner Flow Client",
-                    Enabled = true,
-                    ClientId = "roclient",
+                    ClientId = "ro.client",
+                    Flow = Flows.ResourceOwner,
+
                     ClientSecrets = new List<Secret>
-                    { 
+                    {
                         new Secret("secret".Sha256())
                     },
 
-                    Flow = Flows.ResourceOwner,
-                    
-                    AllowedScopes = new List<string> 
+                    AllowedScopes = new List<string>
                     {
                         "openid",
                         "email",
-                        "read", 
+                        "read",
                         "write",
                         "address",
                         "offline_access"
                     },
 
+                    // used by JS resource owner sample
                     AllowedCorsOrigins = new List<string>
                     {
                         "http://localhost:13048"
                     },
-                    
+
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 3600,
+
+                    // refresh token settings
                     AbsoluteRefreshTokenLifetime = 86400,
                     SlidingRefreshTokenLifetime = 43200,
-
                     RefreshTokenUsage = TokenUsage.OneTimeOnly,
                     RefreshTokenExpiration = TokenExpiration.Sliding
                 },
 
+                /////////////////////////////////////////////////////////////
+                // JavaScript Implicit Client - OAuth only
+                /////////////////////////////////////////////////////////////
                 new Client
                 {
-                    ClientName = "UWP Demo Client",
+                    ClientName = "JavaScript Implicit Client - Simple",
+                    ClientId = "js.simple",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:37045/index.html",
+                    },
+                },
+
+                /////////////////////////////////////////////////////////////
+                // JavaScript Implicit Client - Manual
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "JavaScript Implicit Client - Manual",
+                    ClientId = "js.manual",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        "openid",
+                        "email",
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:37046/index.html",
+                    },
+
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "http://localhost:37046"
+                    }
+                },
+
+                /////////////////////////////////////////////////////////////
+                // JavaScript Implicit Client - TokenManager
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "JavaScript Implicit Client - UserManager",
+                    ClientId = "js.usermanager",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:21575/index.html",
+                        "http://localhost:21575/silent_renew.html",
+                        "http://localhost:21575/callback.html",
+                        "http://localhost:21575/frame.html",
+                        "http://localhost:21575/popup.html",
+                    },
+
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "http://localhost:21575/index.html",
+                    },
+
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "http://localhost:21575",
+                    },
+
+                    AccessTokenLifetime = 3600,
+                    AccessTokenType = AccessTokenType.Jwt
+                },
+
+                /////////////////////////////////////////////////////////////
+                // MVC CodeFlowClient Manual
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "Code Flow Client Demo",
+                    ClientId = "codeclient",
+                    Flow = Flows.AuthorizationCode,
+
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    ClientUri = "https://identityserver.io",
+
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44312/callback",
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.OfflineAccess,
+                        "read",
+                        "write"
+                    },
+
+                    AccessTokenType = AccessTokenType.Reference,
+                },
+
+                /////////////////////////////////////////////////////////////
+                // MVC No Library Client
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "OpenID Connect without Client Library Sample",
+                    ClientId = "nolib.client",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:11716/account/signInCallback",
+                    },
+                },
+
+                /////////////////////////////////////////////////////////////
+                // MVC OWIN Hybrid Client
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "MVC OWIN Hybrid Client",
+                    ClientId = "mvc.owin.hybrid",
+                    Flow = Flows.Hybrid,
+                    AllowAccessTokensViaBrowser = false,
+
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.OfflineAccess,
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = false,
+                    AccessTokenType = AccessTokenType.Reference,
+
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44300/"
+                    },
+
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "https://localhost:44300/"
+                    },
+
+                    LogoutUri = "https://localhost:44300/Home/OidcSignOut",
+                    LogoutSessionRequired = true
+                },
+
+                
+                /////////////////////////////////////////////////////////////
+                // MVC OWIN Implicit Client
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "MVC OWIN Implicit Client",
+                    ClientId = "mvc.owin.implicit",
+                    Flow = Flows.Implicit,
+                    AllowAccessTokensViaBrowser = false,
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44301/"
+                    },
+
+                    LogoutUri = "https://localhost:44301/Home/SignoutCleanup",
+                    LogoutSessionRequired = true,
+                },
+
+                /////////////////////////////////////////////////////////////
+                // WebForms OWIN Implicit Client
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "WebForms OWIN Implicit Client",
+                    ClientId = "webforms.owin.implicit",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:5969/"
+                    },
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "http://localhost:5969/"
+                    }
+                },
+
+                /////////////////////////////////////////////////////////////
+                // WPF WebView Client Sample
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "WPF WebView Client Sample",
+                    ClientId = "wpf.webview.client",
+                    Flow = Flows.Implicit,
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
+                        "read",
+                        "write"
+                    },
+
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+
+                    RedirectUris = new List<string>
+                    {
+                        "oob://localhost/wpf.webview.client",
+                    },
+                },
+
+                /////////////////////////////////////////////////////////////
+                // WPF Client with Hybrid Flow and PKCE
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "WPF Client with Hybrid Flow and PKCE",
+                    ClientId = "wpf.hybrid",
+                    Flow = Flows.HybridWithProofKey,
+
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost/wpf.hybrid"
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        StandardScopes.OpenId.Name,
+                        StandardScopes.Profile.Name,
+                        "read", "write"
+                    },
+
+                    AccessTokenType = AccessTokenType.Reference
+                },
+
+                /////////////////////////////////////////////////////////////
+                // WPF Client with Hybrid Flow and PKCE and PoP
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "WPF Client with Hybrid Flow and PKCE and PoP",
+                    ClientId = "wpf.hybrid.pop",
+                    Flow = Flows.HybridWithProofKey,
+
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost/wpf.hybrid.pop"
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        StandardScopes.OpenId.Name,
+                        StandardScopes.Profile.Name,
+                        StandardScopes.OfflineAccess.Name,
+                        "read", "write"
+                    },
+
+                    AccessTokenType = AccessTokenType.Reference
+                },
+
+                /////////////////////////////////////////////////////////////
+                // UWP OIDC Client
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "UWP OIDC Client",
                     ClientId = "uwp",
                     ClientSecrets = new List<Secret>
                     {
