@@ -3,8 +3,6 @@ using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Configuration.Hosting;
 using IdentityServer3.Core.Logging;
 using IdentityServer3.Core.Services;
-using IdentityServer3.Core.Services.Default;
-using IdentityServer3.Host;
 using IdentityServer3.Host.Config;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Facebook;
@@ -14,11 +12,11 @@ using Microsoft.Owin.Security.Twitter;
 using Microsoft.Owin.Security.WsFederation;
 using Owin;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Infrastructure;
 using Autofac;
 using System;
+using System.IdentityModel.Tokens;
 using Host.Configuration;
 
 namespace Host.Web.Custom
