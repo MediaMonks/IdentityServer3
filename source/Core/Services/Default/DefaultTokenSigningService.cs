@@ -97,7 +97,7 @@ namespace IdentityServer3.Core.Services.Default
         /// <returns>The JWT payload</returns>
         protected virtual string CreatePayload(Token token)
         {
-            return token.CreateJwtPayload();   
+            return token.CreateJwtPayload(_options);   
         }
 
         /// <summary>

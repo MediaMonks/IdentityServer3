@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Linq;
+using IdentityServer3.Core.Configuration;
 
 namespace IdentityServer3.Core.Models
 {
@@ -38,14 +39,15 @@ namespace IdentityServer3.Core.Models
         /// Turns a token object into JWT payload
         /// </summary>
         /// <param name="token">The token</param>
+        /// <param name="options">Identity Server Options</param>
         /// <returns>Serialized JWT payload</returns>
-        public static string CreateJwtPayload(this Token token)
+        public static string CreateJwtPayload(this Token token, IdentityServerOptions options)
         {
             var payload = new JwtPayload(
                 token.Issuer,
                 token.Audience,
                 null,
-                token.CreationTime.UtcDateTime,
+                token.CreationTime.Add(- options.NotBeforeLeeway).UtcDateTime,
                 token.CreationTime.AddSeconds(token.Lifetime).UtcDateTime);
 
             var amrClaims = token.Claims.Where(x => x.Type == Constants.ClaimTypes.AuthenticationMethod);
