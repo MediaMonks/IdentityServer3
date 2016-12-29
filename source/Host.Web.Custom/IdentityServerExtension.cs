@@ -60,7 +60,6 @@ namespace Host.Web.Custom
                         //EnablePostSignOutAutoRedirect = true
                     },
 
-                    NotBeforeLeeway = TimeSpan.FromMinutes(1)
                     //LoggingOptions = new LoggingOptions
                     //{
                     //    EnableKatanaLogging = true

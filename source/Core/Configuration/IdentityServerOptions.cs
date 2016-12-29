@@ -27,7 +27,7 @@ namespace IdentityServer3.Core.Configuration
     /// </summary>
     public class IdentityServerOptions
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IdentityServerOptions"/> class with default values.
@@ -37,6 +37,7 @@ namespace IdentityServer3.Core.Configuration
             SiteName = Constants.IdentityServerName;
 
             this.ProtocolLogoutUrls = new List<string>();
+            this.RequireSsl = true;
             this.Endpoints = new EndpointOptions();
             this.AuthenticationOptions = new AuthenticationOptions();
             this.CspOptions = new CspOptions();
@@ -47,10 +48,7 @@ namespace IdentityServer3.Core.Configuration
             this.DiscoveryOptions = new DiscoveryOptions();
         }
 
-        /// <summary>
-        /// Validates the IdentityServerOptions
-        /// </summary>
-        public virtual void Validate()
+        public void Validate()
         {            
             if (AuthenticationOptions == null)
             {
@@ -103,6 +101,14 @@ namespace IdentityServer3.Core.Configuration
         /// The secondary signing certificate.
         /// </value>
         public X509Certificate2 SecondarySigningCertificate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether SSL is required for IdentityServer. Defaults to `true`.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if SSL is required; otherwise, <c>false</c>.
+        /// </value>
+        public bool RequireSsl { get; set; }
 
         /// <summary>
         /// Gets or sets the public origin for IdentityServer (e.g. "https://yourserver:1234").
@@ -207,16 +213,13 @@ namespace IdentityServer3.Core.Configuration
         /// <c>true</c> if the welcome page is enabled; otherwise, <c>false</c>.
         /// </value>
         public bool EnableWelcomePage { get; set; }
-
-        /// <summary>
-        /// Gets the signing certificates
-        /// </summary>
-        protected internal IEnumerable<X509Certificate2> PublicKeysForMetadata
+        
+        internal IEnumerable<X509Certificate2> PublicKeysForMetadata
         {
             get
             {
                 var keys = new List<X509Certificate2>();
-
+                
                 if (SigningCertificate != null)
                 {
                     keys.Add(SigningCertificate);
@@ -230,10 +233,5 @@ namespace IdentityServer3.Core.Configuration
                 return keys;
             }
         }
-
-        /// <summary>
-        /// Gets or sets the amount of Leeway to give the NotBefore claim
-        /// </summary>
-        public TimeSpan NotBeforeLeeway { get; set; }
     }
 }
