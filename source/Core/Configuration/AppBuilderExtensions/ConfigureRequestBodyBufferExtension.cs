@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Owin
 {
-    internal static class ConfigureRequestBodyBufferExtension
+    public static class ConfigureRequestBodyBufferExtension
     {
         public static IAppBuilder ConfigureRequestBodyBuffer(this IAppBuilder app)
         {

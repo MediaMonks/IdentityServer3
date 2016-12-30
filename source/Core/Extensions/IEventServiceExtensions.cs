@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace IdentityServer3.Core.Extensions
 {
-    internal static class IEventServiceExtensions
+    public static class IEventServiceExtensions
     {
         public static async Task RaisePreLoginSuccessEventAsync(this IEventService events, 
             string signInMessageId, SignInMessage signInMessage, AuthenticateResult authResult)

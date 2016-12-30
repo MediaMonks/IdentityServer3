@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Threading.Tasks;
-using Microsoft.Owin.Builder;
 
 namespace Owin
 {
@@ -59,6 +58,11 @@ namespace Owin
             // turn off weird claim mappings for JWTs
             JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
             JwtSecurityTokenHandler.OutboundClaimTypeMap = new Dictionary<string, string>();
+
+            if (options.RequireSsl)
+            {
+                app.Use<RequireSslMiddleware>();
+            }
 
             if (options.LoggingOptions.EnableKatanaLogging)
             {
@@ -101,7 +105,7 @@ namespace Owin
             app.ConfigureHttpLogging(options.LoggingOptions);
 
             SignatureConversions.AddConversions(app);
-
+            
             var httpConfig = WebApiConfig.Configure(options, container);
             app.UseAutofacWebApi(httpConfig);
             app.UseWebApi(httpConfig);
@@ -112,14 +116,14 @@ namespace Owin
                 // TODO -- perhaps use AsyncHelper instead?
                 DoStartupDiagnosticsAsync(options, eventSvc).Wait();
             }
-
+            
             return app;
         }
 
         private static async Task DoStartupDiagnosticsAsync(IdentityServerOptions options, IEventService eventSvc)
         {
             var cert = options.SigningCertificate;
-
+            
             if (cert == null)
             {
                 Logger.Warn("No signing certificate configured.");

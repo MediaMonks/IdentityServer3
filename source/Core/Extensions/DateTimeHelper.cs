@@ -17,9 +17,9 @@ using System;
 
 namespace IdentityServer3.Core.Extensions
 {
-    internal static class DateTimeHelper
+    public static class DateTimeHelper
     {
-        internal static DateTime UtcNow
+        public static DateTime UtcNow
         {
             get
             {

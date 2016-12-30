@@ -19,7 +19,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace IdentityServer3.Core.Extensions
 {
-    internal static class X509Certificate2Extensions
+    public static class X509Certificate2Extensions
     {
         public static bool IsPrivateAccessAllowed(this X509Certificate2 cert)
         {

@@ -1,23 +1,27 @@
-﻿using IdentityServer3.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens;
+using System.Threading.Tasks;
+using Autofac;
+using Host.Configuration;
+using Host.Configuration.Extensions;
+using IdentityServer3.Core;
 using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Configuration.Hosting;
+using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Logging;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Host.Config;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.Owin;
+using Microsoft.Owin.Infrastructure;
+using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Microsoft.Owin.Security.Twitter;
 using Microsoft.Owin.Security.WsFederation;
 using Owin;
-using System.Collections.Generic;
-using Microsoft.Owin.Logging;
-using Microsoft.Owin.Infrastructure;
-using Autofac;
-using System;
-using System.IdentityModel.Tokens;
-using Host.Configuration;
 
 namespace Host.Web.Custom
 {
@@ -32,9 +36,9 @@ namespace Host.Web.Custom
             app.Map("/core", coreApp =>
             {
                 var factory = new IdentityServerServiceFactory()
-                    .UseInMemoryUsers(Users.Get())
-                    .UseInMemoryClients(Clients.Get())
-                    .UseInMemoryScopes(Scopes.Get());
+                                    .UseInMemoryUsers(Users.Get())
+                                    .UseInMemoryClients(Clients.Get())
+                                    .UseInMemoryScopes(Scopes.Get());
 
                 factory.AddCustomGrantValidators();
                 factory.AddCustomTokenResponseGenerator();
@@ -56,35 +60,26 @@ namespace Host.Web.Custom
 
                     AuthenticationOptions = new AuthenticationOptions
                     {
-                        IdentityProviders = ConfigureIdentityProviders
-                        //EnablePostSignOutAutoRedirect = true
-                    },
-
-                    //LoggingOptions = new LoggingOptions
-                    //{
-                    //    EnableKatanaLogging = true
-                    //},
-
-                    //EventsOptions = new EventsOptions
-                    //{
-                    //    RaiseFailureEvents = true,
-                    //    RaiseInformationEvents = true,
-                    //    RaiseSuccessEvents = true,
-                    //    RaiseErrorEvents = true
-                    //}
+                        IdentityProviders = ConfigureIdentityProviders,
+                        EnableAutoCallbackForFederatedSignout = true
+                    }
                 };
 
                 //START CUSTOM IdentityServer
-                coreApp.Use<RequireSslMiddleware>();
                 idsrvOptions.Validate();
 
                 // turn off weird claim mappings for JWTs
                 JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
                 JwtSecurityTokenHandler.OutboundClaimTypeMap = new Dictionary<string, string>();
 
+                if (idsrvOptions.RequireSsl)
+                {
+                    app.Use<RequireSslMiddleware>();
+                }
+
                 if (idsrvOptions.LoggingOptions.EnableKatanaLogging)
                 {
-                    coreApp.SetLoggerFactory(new LibLogKatanaLoggerFactory());
+                    app.SetLoggerFactory(new LibLogKatanaLoggerFactory());
                 }
 
                 coreApp.UseEmbeddedFileServer();
@@ -93,6 +88,8 @@ namespace Host.Web.Custom
                 coreApp.ConfigureDataProtectionProvider(idsrvOptions);
                 coreApp.ConfigureIdentityServerBaseUrl(idsrvOptions.PublicOrigin);
                 coreApp.ConfigureIdentityServerIssuer(idsrvOptions);
+
+                coreApp.ConfigureRequestBodyBuffer();
 
                 // this needs to be earlier than the autofac middleware so anything is disposed and re-initialized
                 // if we send the request back into the pipeline to render the logged out page
@@ -130,14 +127,14 @@ namespace Host.Web.Custom
                 //{
                 //    var eventSvc = child.Resolve<IEventService>();
                 //    // TODO -- perhaps use AsyncHelper instead?
-                //    DoStartupDiagnosticsAsync(options, eventSvc).Wait();
+                //    DoStartupDiagnosticsAsync(idsrvOptions, eventSvc).Wait();
                 //}
             });
 
             return app;
         }
 
-        public static void ConfigureIdentityProviders(IAppBuilder app, string signInAsType)
+        private static void ConfigureIdentityProviders(IAppBuilder app, string signInAsType)
         {
             var google = new GoogleOAuth2AuthenticationOptions
             {
@@ -182,8 +179,12 @@ namespace Host.Web.Custom
                 ClientId = "65bbbda8-8b85-4c9d-81e9-1502330aacba",
                 RedirectUri = "https://localhost:44333/core/aadcb"
             };
-
             app.UseOpenIdConnectAuthentication(aad);
+
+
+            // workaround for https://katanaproject.codeplex.com/workitem/409
+            var metadataAddress = "https://adfs.leastprivilege.vm/federationmetadata/2007-06/federationmetadata.xml";
+            var manager = new SyncConfigurationManager(new ConfigurationManager<WsFederationConfiguration>(metadataAddress));
 
             var adfs = new WsFederationAuthenticationOptions
             {
@@ -192,7 +193,7 @@ namespace Host.Web.Custom
                 SignInAsAuthenticationType = signInAsType,
                 CallbackPath = new PathString("/core/adfs"),
 
-                MetadataAddress = "https://adfs.leastprivilege.vm/federationmetadata/2007-06/federationmetadata.xml",
+                ConfigurationManager = manager,
                 Wtrealm = "urn:idsrv3"
             };
             app.UseWsFederationAuthentication(adfs);

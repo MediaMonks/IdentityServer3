@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Host.Configuration.Extensions
 {
-    class SyncConfigurationManager : IConfigurationManager<WsFederationConfiguration>
+    public class SyncConfigurationManager : IConfigurationManager<WsFederationConfiguration>
     {
         private readonly IConfigurationManager<WsFederationConfiguration> _inner;
 

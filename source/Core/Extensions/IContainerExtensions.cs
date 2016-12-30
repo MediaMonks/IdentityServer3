@@ -18,9 +18,9 @@ using Microsoft.Owin;
 
 namespace IdentityServer3.Core.Extensions
 {
-    internal static class IContainerExtensions
+    public static class IContainerExtensions
     {
-        internal static ILifetimeScope CreateScopeWithEmptyOwinContext(this IContainer container)
+        public static ILifetimeScope CreateScopeWithEmptyOwinContext(this IContainer container)
         {
             var ctx = new OwinContext();
             return container.BeginLifetimeScope(b =>
